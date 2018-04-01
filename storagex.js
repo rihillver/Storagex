@@ -75,11 +75,10 @@
 		 */
 		set: function(key, value) {
 			if(arguments.length === 1) {
-				key.k = key.k || this.getTime();
-				this.carrier[key.k] = key;
-			} else {
-				this.carrier[key] = value;
+				value = key;
+				key = key.k || this.getTime();
 			}
+			this.carrier[key] = value;
 			this.save();
 		},
 
