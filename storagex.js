@@ -1,6 +1,6 @@
 (function(global) {
 
-	var storage = plus.storage;
+	var storage = plus.storage; //也可以是Window.localStorage
 
 	var setItem = function(key, value) {
 		if(value !== undefined && value !== null) {
