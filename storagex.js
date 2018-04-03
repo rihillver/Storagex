@@ -11,7 +11,7 @@
 
 	var getItem = function(key) {
 		var data = storage.getItem(key);
-		if(data !== undefined && data !== null) {
+		if(data !== null) {
 			return JSON.parse(data);
 		}
 		return null;
@@ -22,6 +22,9 @@
 	};
 
 	var getCarrier = function(name) {
+		if(name instanceof Object) {
+			return name;
+		}
 		var carrier = getItem(name);
 		return carrier || {};
 	};
@@ -47,11 +50,12 @@
 	 * 3、成员对象中含有k属性时则按照k属性的值作为载体对象的key，如果不含有k属性且也没有给定的key值时，则添加k属性并且取时间戳作为k属性的值。
 	 * 4、如果设置了最大限制数量，则超过最大值时从遍历对象属性时最前面的属性开始删除。
 	 * 
-	 * @param {String} name storage存储键名
+	 * @param {String or Object} name storage存储键名（如果是简单对象则把该对象作为载体对象，不做任何对storage的操作）
 	 * @param {Number} limit [可选]最大限制数量，默认0
 	 * @param {Boolean} basedOnSecond [可选]true：时间戳基于秒，false：时间戳基于毫秒，默认false
 	 */
 	var Storagex = function(name, limit, basedOnSecond) {
+		this.unsave = name instanceof Object;
 		this.name = name;
 		this.limit = limit || 0;
 		this.basedOnSecond = !!basedOnSecond;
@@ -270,7 +274,9 @@
 					this.removeFirst(length - this.limit);
 				}
 			}
-			setItem(this.name, this.carrier);
+			if(!this.unsave) {
+				setItem(this.name, this.carrier);
+			}
 		},
 
 		/**
@@ -287,7 +293,9 @@
 		 * 
 		 */
 		flush: function() {
-			this.carrier = getCarrier(this.name);
+			if(!this.unsave) {
+				this.carrier = getCarrier(this.name);
+			}
 		},
 
 		/**
