@@ -254,6 +254,14 @@
 		},
 
 		/**
+		 * 返回载体对象中成员对象的数量（即载体对象的key数组的长度）。
+		 * 
+		 */
+		length: function() {
+			return this.keys().length;
+		},
+
+		/**
 		 * 返回载体对象。
 		 * 
 		 * @param {String} propName 成员对象的属性名
@@ -266,15 +274,20 @@
 		/**
 		 * 保存到本地（如果超出最大限定数量则移除最前面的）。
 		 * 
+		 * 注：如果指定storage存储键名，则以该键名来存储载体对象。
+		 * 
+		 * @param {String} name [可选]storage存储键名
 		 */
-		save: function() {
+		save: function(name) {
 			if(this.limit > 0) {
 				var length = this.keys().length;
 				if(length > this.limit) {
 					this.removeFirst(length - this.limit);
 				}
 			}
-			if(!this.unsave) {
+			if(name) {
+				setItem(name, this.carrier);
+			} else if(!this.unsave) {
 				setItem(this.name, this.carrier);
 			}
 		},
@@ -344,6 +357,29 @@
 				}
 			}
 			return null;
+		},
+
+		/**
+		 * 删除含有指定的属性名和属性值的成员对象。
+		 * 
+		 * 注：当第一个参数类型为Function时则作为筛选函数（筛选函数的第一个参数：成员对象，第二个参数：载体对象的key，返回Boolean类型）。
+		 * 
+		 * @param {String or Number or Function} popName 成员对象属性名（如果类型为Function时则作为筛选函数）
+		 * @param {Object} popValue 成员对象属性值
+		 */
+		del: function(popName, popValue) {
+			for(var p in this.carrier) {
+				var item = this.carrier[p];
+				if(typeof popName === 'function') {
+					if(popName(item, p)) {
+						delete this.carrier[p];
+					}
+				} else {
+					if(item[popName] === popValue) {
+						delete this.carrier[p];
+					}
+				}
+			}
 		},
 
 		/**
