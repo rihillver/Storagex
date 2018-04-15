@@ -262,6 +262,14 @@
 		},
 
 		/**
+		 * 返回载体对象是否为空对象的状态，即是否为{}。
+		 * 
+		 */
+		isEmpty: function() {
+			return this.length() === 0;
+		},
+
+		/**
 		 * 返回载体对象。
 		 * 
 		 * @param {String} propName 成员对象的属性名
