@@ -1,6 +1,13 @@
+;
 (function(global) {
 
-	var storage = plus.storage; //也可以是Window.localStorage
+	var storage = null;
+
+	var initStorage = function() {
+		if(storage === null) {
+			storage = plus.storage; //也可以是Window.localStorage
+		}
+	};
 
 	var setItem = function(key, value) {
 		if(value !== undefined && value !== null) {
@@ -55,7 +62,12 @@
 	 * @param {Boolean} basedOnSecond [可选]true：时间戳基于秒，false：时间戳基于毫秒，默认false
 	 */
 	var Storagex = function(name, limit, basedOnSecond) {
-		this.unsave = name instanceof Object;
+		if(typeof name === 'string') {
+			initStorage();
+			this.unsave = false;
+		} else {
+			this.unsave = true;
+		}
 		this.name = name;
 		this.limit = limit || 0;
 		this.basedOnSecond = !!basedOnSecond;
